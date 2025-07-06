@@ -33,8 +33,14 @@ public class ButtonInteraction2D : MonoBehaviour
     {
         if (door != null)
         {
-            // 문은 누군가 버튼 위에 있으면 열림 (SetActive(false)), 아무도 없으면 닫힘 (SetActive(true))
-            door.SetActive(objectsOnButton.Count == 0);
+            door.SetActive(objectsOnButton.Count == 0); // 문은 플레이어나 리플레이가 버튼 위에 있으면 열림 (SetActive(false)), 아무도 없으면 닫힘 (SetActive(true))
         }
     }
+
+    public void ResetButton()
+    {
+        objectsOnButton.Clear();
+        UpdateDoorState();
+    }
+
 }

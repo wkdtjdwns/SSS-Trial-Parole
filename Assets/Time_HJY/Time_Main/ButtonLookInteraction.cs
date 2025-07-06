@@ -23,32 +23,33 @@ public class ButtonLookInteraction : MonoBehaviour
         CheckInteraction();
     }
 
-    void CheckButtonLook()
+    void CheckButtonLook() //레이케스트로 버튼 콜라이더를 볼 때 상호작용 할 수 있게 하는 함수
     {
         Ray ray = new Ray(playerCamera.transform.position, playerCamera.transform.forward);
         RaycastHit hit;
 
         if (Physics.Raycast(ray, out hit, 3f))
         {
+            // 버튼에 닿았는가?
             if (hit.collider.CompareTag(buttonTag))
             {
-                // 버튼 히트 시
-                if (currentButtonRenderer == null)
+                Renderer newRenderer = hit.collider.GetComponent<Renderer>();
+
+                // 버튼이 새로 바뀌었는가?
+                if (currentButtonRenderer != newRenderer)
                 {
-                    currentButtonRenderer = hit.collider.GetComponent<Renderer>(); 
+                    ResetButtonColor(); // 이전 버튼 색 되돌림
+
+                    currentButtonRenderer = newRenderer;
                     originalColor = currentButtonRenderer.material.color;
                     currentButtonRenderer.material.color = highlightColor;
                 }
-            }
-            else
-            {
-                ResetButtonColor();
+
+                return; // 버튼 맞았고, 처리 완료했으면 끝
             }
         }
-        else
-        {
-            ResetButtonColor();
-        }
+        // 여기에 왔다는 건 버튼 안 보고 있음
+        ResetButtonColor();
     }
 
     void CheckInteraction()
