@@ -19,11 +19,11 @@ public class ButtonLookInteraction : MonoBehaviour
 
     void Update()
     {
-        CheckButtonLook();
-        CheckInteraction();
+        CheckButtonLook(); //버튼을 지금 보고 있는지 확인하는 함수
+        CheckInteraction(); //버튼을 눌렀는지 확인하고 씬 이동하는 함수
     }
 
-    void CheckButtonLook()
+    void CheckButtonLook() //레이케스트로 버튼 콜라이더를 볼 때 상호작용 할 수 있게 하는 함수
     {
         Ray ray = new Ray(playerCamera.transform.position, playerCamera.transform.forward);
         RaycastHit hit;
@@ -42,18 +42,18 @@ public class ButtonLookInteraction : MonoBehaviour
             }
             else
             {
-                ResetButtonColor();
+                ResetButtonColor();// 버튼 색 초기화
             }
         }
         else
         {
-            ResetButtonColor();
+            ResetButtonColor(); //버튼 색 초기화
         }
     }
 
     void CheckInteraction()
     {
-        if (Input.GetKeyDown(KeyCode.F) && currentButtonRenderer != null)
+        if (Input.GetKeyDown(KeyCode.F) && currentButtonRenderer != null) //버튼 렌더러가 있을 때 f키를 누른다면 씬 이동
         {
             Debug.Log("F 키 입력");
             SceneManager.LoadScene(sceneToLoad);
