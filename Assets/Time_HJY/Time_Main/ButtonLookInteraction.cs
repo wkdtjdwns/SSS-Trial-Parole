@@ -3,78 +3,63 @@ using UnityEngine.SceneManagement;
 
 public class ButtonLookInteraction : MonoBehaviour
 {
-    [Header("Button Settings")]
-    public string buttonTag = "Button"; // 버튼 오브젝트의 태그
-    public Color highlightColor = Color.red; // 바라봤을 때 변경될 색
-    public string sceneToLoad = "Time2"; // 변경될 씬 이름
+    public string buttonTag = "Button"; // 버튼 오브젝트에 부여한 태그 이름
+    public Color highlightColor = Color.red; // 바라봤을 때 버튼이 바뀔 색상
+    public string sceneToLoad = "Time2"; // F 키를 눌렀을 때 이동할 씬 이름
 
-    private Camera playerCamera;
-    private Renderer currentButtonRenderer;
-    private Color originalColor;
+    private Camera playerCamera; // 플레이어 카메라 참조
+    private Renderer currentButtonRenderer; // 현재 바라보고 있는 버튼의 렌더러
+    private Color originalColor; // 버튼 원래 색상 저장용
 
     void Start()
     {
-        playerCamera = Camera.main;
+        playerCamera = Camera.main; // 플레이어 카메라를 가져옴 (MainCamera 태그 있는거)
     }
 
     void Update()
     {
-        CheckButtonLook(); //버튼을 지금 보고 있는지 확인하는 함수
-        CheckInteraction(); //버튼을 눌렀는지 확인하고 씬 이동하는 함수
+        CheckButtonLook(); // 버튼을 바라보고 있는지 체크
+        CheckInteraction(); // F 키 입력 감지해서 씬 전환
     }
 
-    void CheckButtonLook() //레이케스트로 버튼 콜라이더를 볼 때 상호작용 할 수 있게 하는 함수
+    /// 플레이어가 버튼을 바라보고 있으면 버튼 색을 변경함
+    void CheckButtonLook()
     {
-        Ray ray = new Ray(playerCamera.transform.position, playerCamera.transform.forward);
+        Ray ray = new Ray(playerCamera.transform.position, playerCamera.transform.forward); // 전방 레이 발사
         RaycastHit hit;
 
-        if (Physics.Raycast(ray, out hit, 3f))
+        if (Physics.Raycast(ray, out hit, 3f)) // 3미터 내에 닿은 오브젝트가 있다면
         {
-            // 버튼에 닿았는가?
-            if (hit.collider.CompareTag(buttonTag))
+            if (hit.collider.CompareTag(buttonTag)) // 태그가 "Button"인 경우
             {
                 Renderer newRenderer = hit.collider.GetComponent<Renderer>();
 
-                // 버튼이 새로 바뀌었는가?
-                if (currentButtonRenderer != newRenderer)
+                if (currentButtonRenderer != newRenderer) // 새로운 버튼을 바라봤다면
                 {
-                    ResetButtonColor(); // 이전 버튼 색 되돌림
+                    ResetButtonColor(); // 이전 버튼 색 복원
 
                     currentButtonRenderer = newRenderer;
-                    originalColor = currentButtonRenderer.material.color;
-                    currentButtonRenderer.material.color = highlightColor;
+                    originalColor = currentButtonRenderer.material.color; // 원래 색 저장
+                    currentButtonRenderer.material.color = highlightColor; // 강조 색상으로 변경
                 }
-<<<<<<< HEAD
 
-                return; // 버튼 맞았고, 처리 완료했으면 끝
+                return; // 버튼을 바라보는 상태이므로 여기서 함수 종료
             }
         }
-        // 여기에 왔다는 건 버튼 안 보고 있음
-        ResetButtonColor();
-=======
-            }
-            else
-            {
-                ResetButtonColor();// 버튼 색 초기화
-            }
-        }
-        else
-        {
-            ResetButtonColor(); //버튼 색 초기화
-        }
->>>>>>> e746f0cad4edd8199ffe5f654842c3b8291b0105
+        ResetButtonColor(); // 버튼이 아니거나 아무것도 안 보고 있을 경우 초기화
     }
 
+    /// F 키를 누르면 씬 이동
     void CheckInteraction()
     {
-        if (Input.GetKeyDown(KeyCode.F) && currentButtonRenderer != null) //버튼 렌더러가 있을 때 f키를 누른다면 씬 이동
+        if (Input.GetKeyDown(KeyCode.F) && currentButtonRenderer != null)
         {
-            Debug.Log("F 키 입력");
-            SceneManager.LoadScene(sceneToLoad);
+            Debug.Log("F 키 입력됨 - 씬 이동");
+            SceneManager.LoadScene(sceneToLoad); // 지정된 씬으로 이동
         }
-
     }
 
+    /// 버튼 색을 원래대로 되돌리는 함수
     void ResetButtonColor()
     {
         if (currentButtonRenderer != null)
