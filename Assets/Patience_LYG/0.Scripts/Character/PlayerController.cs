@@ -23,12 +23,22 @@ public class PlayerController : MonoBehaviour
     public float viewClampYMin = -70;
     public float viewClampYMax = 80;
 
+    [Header("Gravity")]
+    public float gravityAmount;
+    public float gracityMin;
+    private float playerGravity;
+
+    [Header("Jumping")]
+    public Vector3 jumpingForce;
+    private Vector3 jumpingForceVelocity;
+
     private void Awake()
     {
         defaultInput = new DefaultInput();
 
         defaultInput.Character.Movement.performed += e => inputMovement = e.ReadValue<Vector2>();
         defaultInput.Character.View.performed += e => inputView = e.ReadValue<Vector2>();
+        defaultInput.Character.Jump.performed += e => Jump();
 
         defaultInput.Enable();
 
@@ -42,6 +52,7 @@ public class PlayerController : MonoBehaviour
     {
         CalculateView();
         CalculateMovement();
+        CalculateJump();
     }
 
     /// <summary>
@@ -69,6 +80,38 @@ public class PlayerController : MonoBehaviour
         var newMovementSpeed = new Vector3(horizontalSpeed, 0, verticalSpeed);
         newMovementSpeed = transform.TransformDirection(newMovementSpeed);
 
+        if(playerGravity > gracityMin && jumpingForce.y < 0.1f)
+        {
+            playerGravity -= gravityAmount * Time.deltaTime;
+        }
+
+        //땅인지 판단
+        if(playerGravity < -1 && characterController.isGrounded)
+        {
+            playerGravity = -1;
+        }
+
+        if(jumpingForce.y > 0.1f)
+        {
+            playerGravity = 0;
+        }
+
+        newMovementSpeed.y += playerGravity;
+        newMovementSpeed += jumpingForce * Time.deltaTime;
+
         characterController.Move(newMovementSpeed);
+    }
+
+    private void CalculateJump()
+    {
+        jumpingForce = Vector3.SmoothDamp(jumpingForce, Vector3.zero, ref jumpingForceVelocity, playerSettings.jumpingFalloff); //점프 힘을 부드럽게 감소
+    }
+
+    private void Jump()
+    {
+        if(!characterController.isGrounded)
+             return;
+
+        jumpingForce = Vector3.up * playerSettings.jumpngHeight;
     }
 }
